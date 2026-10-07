@@ -1,14 +1,14 @@
 @extends('layouts.base')
 
-@section('title','Data Product')
+@section('title','Data Users')
 
 @section('main')
 <div class="main-content">
     <section class="section">
       <div class="section-header">
-        <h1>Data Users</h1>
+        <h1>Data Orders</h1>
         <div class="section-header-button">
-            <a href="{{route('products.create')}}" class="btn btn-primary">Tambah Data Product</a>
+            <a href="" class="btn btn-primary">Tambah Data Order</a>
         </div>
         <div class="section-header-breadcrumb">
           <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
@@ -49,7 +49,7 @@
             @endif
             <div class="card">
               <div class="card-header">
-                <h4>Users</h4>
+                <h4>Orders</h4>
               </div>
               <div class="card-body">
 
@@ -66,56 +66,35 @@
                 <div class="table-responsive">
                   <table class="table table-bordered table-md">
                     <tr>
-                      <th>No</th>
-                      <th>Name</th>
-                      <th>Category</th>
-                      <th>Price</th>
-                      <th>Status</th>
-                      <th>Image</th>
-                      <th>Action</th>
+                        <th>Order Id</th>
+                        <th>Transaction Time</th>
+                        <th>Payment Method</th>
+                        <th>Total Price</th>
+                        <th>Total Item</th>
+                        <th>Cashier</th>
+                        <th>Detail</th>
                     </tr>
-                    @foreach ($product as $row)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $row->name }}
-                            </td>
-                            <td>
-                                {{ $row->category->name }}
-                            </td>
-                            <td>
-                                {{ $row->price }}
-                            </td>
-                            <td>
-                                {{ $row->status }}
-                            </td>
-                            <td>
-                                <img alt="gambar product" class="mr-3 rounded-curcle" width="56" 
-                                src="{{ asset('storage/' . $row->image) }}">
-                            </td>
-                            <td>
-    <div class="d-flex justify-content-center">
-
-        {{-- Edit --}}
-        <a href="{{ route('products.edit', $row->id) }}"
-           class="btn btn-sm btn-info btn-icon mr-2">
-            <i class="fas fa-edit"></i>
-        </a>
-
-        {{-- Hapus --}}
-        <form action="{{ route('products.destroy', $row->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-
-            <input type="hidden" name="id" value="{{ $row->id }}">
-
-            <button type="submit" class="btn btn-danger btn-action">
-                <i class="fas fa-trash"></i>
-            </button>
-        </form>
-
-    </div>
-</td>
-                        </tr>
+                    @foreach ($order as $row)
+                    <tr>
+                        <td>
+                            {{ $row->id }}
+                        </td>
+                        <td><a
+                               {{ $row->transaction_time }}
+                        </td>
+                        <td>
+                            {{ $row->payment_method }}
+                        </td>
+                        <td>
+                            {{ $row->total_price }}
+                        </td>
+                        <td>{{ $row->total_item }}
+                        </td>
+                        <td>{{ $row->cashier->name }}</td>
+                        <td>
+                            <a href="{{route('orders.show',$row->id)}}" class="btn btn-sn btn-info btn-icon "><i class="fas fa-eye"></i></a>
+                        </td>
+                    </tr>
                     @endforeach
                   </table>
                 </div>

@@ -20,5 +20,8 @@
             <li class="nav-item  ">
                 <a href="{{route('products.index')}}" class="nav-link"><i class="fas fa-fire"></i><span>Data Product</span></a>
             </li>
+            <li class="nav-item  ">
+                <a href="{{route('orders.index')}}" class="nav-link"><i class="fas fa-fire"></i><span>Data Orders</span></a>
+            </li>
     </aside>
 </div>

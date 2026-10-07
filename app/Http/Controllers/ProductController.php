@@ -29,42 +29,79 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'category_id' => 'required',
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'image' => 'required',
-            'criteria' => 'required',
-            'favorite' => 'required',
-            'status' => 'required',
-            'stock' => 'required',
-        ]);
+//     public function store(Request $request)
+// {
+//     $request->validate([
+//         'category_id' => 'required',
+//         'name' => 'required',
+//         'description' => 'required',
+//         'price' => 'required',
+//         'image' => 'required|image',
+//         'criteria' => 'required',
+//         'favorite' => 'required',
+//         'status' => 'required',
+//         'stock' => 'required',
+//     ]);
 
-        $product = new Product;
-        $product->category_id = $request->category_id;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
+//     $filename = time() . '.' . $request->image->extension();
 
-        $product->criteria = $request->criteria;
-        $product->favorite = $request->favorite;
-        $product->status = $request->status;
-        $product->stock = $request->stock;
-        $product->save();
+//     $request->image->storeAs('public/products', $filename);
 
-        //image
-        $image = $request->file('image');
-        $image->storeAs('public/products', $product->id . '.' . $image->extension());
-        $product->image = 'products/' . $product->id . '.' . $image->extension();
-        $product->save();
+//     Product::create([
+//         'name' => $request->name,
+//         'price' => $request->price,
+//         'stock' => $request->stock,
+//         'description' => $request->description,
+//         'category_id' => $request->category_id,
+//         'image' => $filename,
+//         'criteria' => $request->criteria,
+//         'favorite' => $request->favorite,
+//         'status' => $request->status,
+//         'stock' => $request->stock
+//     ]);
 
-        return redirect()->route('products.index')->with('Create', 'Product created successfully');
+//     return redirect()
+//         ->route('products.index')
+//         ->with('Create', 'Product created successfully');
+// }
 
-    }
 
+public function store(Request $request)
+{
+    $request->validate([
+        'category_id' => 'required',
+        'name' => 'required',
+        'description' => 'required',
+        'price' => 'required',
+        'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        'criteria' => 'required',
+        'favorite' => 'required',
+        'status' => 'required',
+        'stock' => 'required',
+    ]);
+
+    $image = $request->file('image');
+
+    $filename = time() . '.' . $image->getClientOriginalExtension();
+
+    // Simpan ke storage/app/public/products
+    $image->storeAs('products', $filename, 'public');
+
+    Product::create([
+        'name' => $request->name,
+        'price' => $request->price,
+        'stock' => $request->stock,
+        'description' => $request->description,
+        'category_id' => $request->category_id,
+        'image' => 'products/' . $filename,
+        'criteria' => $request->criteria,
+        'favorite' => $request->favorite,
+        'status' => $request->status
+    ]);
+
+    return redirect()->route('products.index')
+        ->with('Create', 'Product created successfully');
+}
     /**
      * Display the specified resource.
      */
@@ -78,8 +115,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $categories = Category::orderBy('name', 'ASC')->get();
-        return view('Pages.products.edit', compact('product', 'categories'));
+        $category = Category::orderBy('name', 'ASC')->get();
+        return view('Pages.products.update', compact('product', 'category'));
 
     }
 
@@ -87,27 +124,32 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */  
     public function update(Request $request, Product $product)
-    {
-        
-        $product->category_id = $request->category_id;
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->criteria = $request->criteria;
-        $product->favorite = $request->favorite;
-        $product->status = $request->status;
-        $product->stock = $request->stock;
-        $product->save();
+{
+    $product->category_id = $request->category_id;
+    $product->name = $request->name;
+    $product->description = $request->description;
+    $product->price = $request->price;
+    $product->criteria = $request->criteria;
+    $product->favorite = $request->favorite;
+    $product->status = $request->status;
+    $product->stock = $request->stock;
 
-        //check if image is not empty
-        if ($request->image) {
-            $image = $request->file('image');
-            $image->storeAs('public/products', $product->id . '.' . $image->extension());
-            $product->image = 'products/' . $product->id . '.' . $image->extension();
-            $product->save();
-        }
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+
+        $filename = $product->id . '.' . $image->extension();
+
+        $image->storeAs('public/products', $filename);
+
+        $product->image = $filename;
     }
+
+    $product->save();
+
+    return redirect()
+        ->route('products.index')
+        ->with('Update', 'Product updated successfully');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -115,6 +157,6 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        return redirect()->route('products.index')->with('Delete', 'Product deleted successfully');
     }
 }

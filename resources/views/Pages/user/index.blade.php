@@ -80,17 +80,28 @@
                         <td>{{$row->email}}</td>
                         <td>{{$row->phone}}</td>
                         <td>
-                            <div class="d-flex justify-content-center">
-                                <a href="{{ route('users.edit',$row->id) }}" class="btn btn-sm btn-info btn-icon"><i class="fas fa-edit"></i></a>
-                            </div>
-        
-                            <form action="{{ route('users.destroy',$row->id )}}" method="POST" class="ml-2">
-                                @csrf
-                                @method('DELETE')
-                                <input type="hidden" name="method" value="{{$row->id}}">
-                                <button type="submit" class="btn btn-danger btn-action"><i class="fas fa-trash"></i></button>
-                            </form>
-                        </td>
+    <div class="d-flex justify-content-center align-items-center">
+
+        {{-- Tombol Edit --}}
+        <a href="{{ route('users.edit', $row->id) }}"
+           class="btn btn-sm btn-info btn-icon mr-2">
+            <i class="fas fa-edit"></i>
+        </a>
+
+        {{-- Tombol Delete --}}
+        <form action="{{ route('users.destroy', $row->id) }}"
+              method="POST">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    class="btn btn-sm btn-danger btn-icon">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+
+    </div>
+</td>
                     </tr>
                     @endforeach
                   </table>

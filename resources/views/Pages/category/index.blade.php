@@ -76,19 +76,27 @@
                             <td>{{ $row->name }}</td>
                             <td>{{ $row->description }}</td>
                             <td>
-                                <div class="d-flex justify-content-center">
-                                    <a href="{{route('categories.edit',$row->id)}}" class="btn btn-sm btn-info btn-icon"><i class="fas fa-edit"></i></a>
-                                </div>
+    <div class="d-flex justify-content-center align-items-center">
 
-                               <div class="d-flex justify-content-center">
-                                <form action="{{route('categories.destroy',$row->id)}}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <input type="hidden" name="id" value="{{ $row->id }}">
-                                    <button type="submit" class="btn btn-danger btn-action"><i class="fas fa-trash"></i></button>
-                                </form>
-                               </div>
-                            </td>
+        {{-- Edit --}}
+        <a href="{{ route('categories.edit', $row->id) }}"
+           class="btn btn-sm btn-info btn-icon mr-2">
+            <i class="fas fa-edit"></i>
+        </a>
+
+        {{-- Delete --}}
+        <form action="{{ route('categories.destroy', $row->id) }}"
+              method="POST">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit" class="btn btn-sm btn-danger btn-icon">
+                <i class="fas fa-trash"></i>
+            </button>
+        </form>
+
+    </div>
+</td>
                         </tr>
                     @endforeach
                   </table>
